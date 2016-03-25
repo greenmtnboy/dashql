@@ -15,7 +15,30 @@ def joinClause(script):
 
 ##find query columns
 def selectClause(script):
-    fc = re.search('select(.*?)into|from', script,re.DOTALL)
+    fc = re.search('select(.*?)into|from', script,re.DOTALL | re.IGNORECASE)
+    retcols=[]
+    if fc:
+        allcol = []
+        allcol=str(fc.group(1)).split(',')
+        #print(allcol)
+        for i in allcol:
+            keypair=i.strip().split()
+            print(keypair)
+            if len(keypair)==2:
+                retcols.append([keypair[0],keypair[1]])
+            else:
+                retcols.append([keypair[0], ''])
+    return retcols
+
+##find where clause
+def whereClause(script):
+    fc = re.search('select(.*?)into|from', script, re.DOTALL)
+    if fc:
+        return fc.group(1)
+
+##find into clause
+def intoClause(script):
+    fc = re.search('into (.*?)[\s\n]', script)
     if fc:
         return fc.group(1)
 
@@ -43,6 +66,7 @@ for i in parsed:
     print(fromClause(i))
     print(joinClause(i))
     print(selectClause(i))
+    print(intoClause(i))
 
 
 #this will hold all our parsedprocedure information
